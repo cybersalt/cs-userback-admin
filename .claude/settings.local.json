@@ -4,7 +4,14 @@
       "Bash(git remote set-url:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Skill(joomla-development)",
+      "Skill(joomla-development:*)",
+      "Bash(if not exist dist mkdir dist)",
+      "Bash(\"C:\\\\Program Files\\\\7-Zip\\\\7z.exe\" a -tzip \"../dist/plg_system_userbackadmin_v1.0.0.zip\" userbackadmin.xml userbackadmin.php)",
+      "Bash(\"C:\\\\Program Files\\\\7-Zip\\\\7z.exe\" l \"e:\\\\github\\\\cs-userback-admin\\\\dist\\\\plg_system_userbackadmin_v1.0.0.zip\")",
+      "Bash(\"C:\\\\Program Files\\\\7-Zip\\\\7z.exe\" a -tzip \"../plg_system_userbackadmin_v1.0.0.zip\" userbackadmin.xml userbackadmin.php -y)",
+      "Bash(\"C:\\\\Program Files\\\\7-Zip\\\\7z.exe\" a -tzip \"../plg_system_userbackadmin_v1.1.0.zip\" userbackadmin.xml userbackadmin.php -y)"
     ]
   }
 }

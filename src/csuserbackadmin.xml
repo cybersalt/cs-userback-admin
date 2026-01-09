@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade" version="5.0">
+    <name>Cybersalt Userback Admin</name>
+    <author>Cybersalt Consulting Ltd.</author>
+    <creationDate>January 2026</creationDate>
+    <copyright>Copyright (C) 2025-2026 Cybersalt Consulting Ltd. All rights reserved.</copyright>
+    <license>GNU General Public License version 3 or later</license>
+    <authorEmail>support@cybersalt.com</authorEmail>
+    <authorUrl>https://cybersalt.com</authorUrl>
+    <version>1.1.0</version>
+    <description><![CDATA[
+        <h3>Cybersalt Userback Admin</h3>
+        <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>
+        <h4>Features:</h4>
+        <ul>
+            <li>Display widget in Administrator backend</li>
+            <li>Display widget on Frontend for logged-in users</li>
+            <li>Detect backend sessions on frontend (show to admins browsing the site)</li>
+            <li>User group restrictions for both backend and frontend</li>
+            <li>Optional guest access on frontend</li>
+            <li>Prevents enabling without a valid access token</li>
+        </ul>
+        <p><strong>Credits:</strong> Developed by Cybersalt Consulting Ltd. with contributions from Gurnoor Deol.</p>
+        <p><a href="https://github.com/cybersalt/cs-userback-admin" target="_blank">View on GitHub</a></p>
+    ]]></description>
+    <files>
+        <filename plugin="csuserbackadmin">csuserbackadmin.php</filename>
+    </files>
+    <changelogurl>https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/changelog.xml</changelogurl>
+    <updateservers>
+        <server type="extension" name="Cybersalt Userback Admin Updates">https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/updates.xml</server>
+    </updateservers>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="access_token"
+                    type="text"
+                    label="Userback Access Token"
+                    description="Enter your Userback project access token here."
+                />
+            </fieldset>
+
+            <fieldset name="backend" label="Backend Settings">
+                <field
+                    name="enable_backend"
+                    type="radio"
+                    label="Enable in Backend"
+                    description="Show the Userback widget in the administrator area."
+                    default="1"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </field>
+                <field
+                    name="backend_usergroups"
+                    type="usergrouplist"
+                    label="Backend User Groups"
+                    description="Select which user groups can see the widget in the backend. Leave empty to show to all backend users."
+                    multiple="true"
+                />
+            </fieldset>
+
+            <fieldset name="frontend" label="Frontend Settings">
+                <field
+                    name="enable_frontend"
+                    type="radio"
+                    label="Enable on Frontend"
+                    description="Show the Userback widget on the public site."
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </field>
+                <field
+                    name="frontend_usergroups"
+                    type="usergrouplist"
+                    label="Frontend User Groups"
+                    description="Select which user groups can see the widget on the frontend. Leave empty to show to all logged-in users."
+                    multiple="true"
+                />
+                <field
+                    name="show_guests"
+                    type="radio"
+                    label="Show to Guests"
+                    description="Show the Userback widget to non-logged-in visitors."
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

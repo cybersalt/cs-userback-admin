@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelogs>
+    <changelog>
+        <element>plg_system_csuserbackadmin</element>
+        <type>plugin</type>
+        <folder>system</folder>
+        <version>1.1.0</version>
+        <addition>
+            <item>Frontend widget support - display Userback on public site</item>
+            <item>Backend session detection - show widget to admins browsing frontend</item>
+            <item>User group restrictions for backend display</item>
+            <item>User group restrictions for frontend display</item>
+            <item>Guest access option for frontend visitors</item>
+        </addition>
+        <change>
+            <item>Improved session detection using database queries</item>
+            <item>Updated plugin metadata and documentation</item>
+        </change>
+    </changelog>
+    <changelog>
+        <element>plg_system_csuserbackadmin</element>
+        <type>plugin</type>
+        <folder>system</folder>
+        <version>1.0.0</version>
+        <addition>
+            <item>Initial release</item>
+            <item>Backend widget injection for Joomla Administrator</item>
+            <item>Access token configuration</item>
+            <item>Validation to prevent enabling without token</item>
+        </addition>
+    </changelog>
+</changelogs>
