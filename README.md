@@ -65,7 +65,7 @@ This plugin consists of:
 - `userbackadmin.php` — main PHP logic
 - `userbackadmin.xml` — manifest file for installation and configuration
 
-Clone, fork, or contribute on GitHub!
+Clone, fork, or contribute on [GitHub](https://github.com/cybersalt/cs-userback-admin)!
 
 ---
 
