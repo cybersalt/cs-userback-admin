@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Joomla.Plugin
- * @subpackage  System.CsUserbackAdmin
+ * @subpackage  System.Cs_UserbackAdmin
  *
  * @author      Cybersalt Consulting Ltd.
  * @copyright   Copyright (C) 2025-2026 Cybersalt Consulting Ltd. All rights reserved.
@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\User\User;
 
-final class PlgSystemCsuserbackadmin extends CMSPlugin
+final class PlgSystemCs_userbackadmin extends CMSPlugin
 {
     public function onBeforeCompileHead(): void
     {
@@ -217,7 +217,7 @@ final class PlgSystemCsuserbackadmin extends CMSPlugin
     public function onExtensionBeforeSave($context, $table, $isNew, $data): bool
     {
         // Only apply to this plugin
-        if ($context !== 'com_plugins.plugin' || $table->element !== 'csuserbackadmin' || $table->folder !== 'system') {
+        if ($context !== 'com_plugins.plugin' || $table->element !== 'cs_userbackadmin' || $table->folder !== 'system') {
             return true;
         }
 

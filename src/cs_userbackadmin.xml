@@ -2,7 +2,7 @@
 <extension type="plugin" group="system" method="upgrade" version="5.0">
     <name>Cybersalt Userback Admin</name>
     <author>Cybersalt Consulting Ltd.</author>
-    <creationDate>January 2026</creationDate>
+    <creationDate>September 2025</creationDate>
     <copyright>Copyright (C) 2025-2026 Cybersalt Consulting Ltd. All rights reserved.</copyright>
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
@@ -24,9 +24,9 @@
         <p><a href="https://github.com/cybersalt/cs-userback-admin" target="_blank">View on GitHub</a></p>
     ]]></description>
     <files>
-        <filename plugin="csuserbackadmin">csuserbackadmin.php</filename>
+        <filename plugin="cs_userbackadmin">cs_userbackadmin.php</filename>
     </files>
-    <changelogurl>https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/changelog.xml</changelogurl>
+    <changelogurl>https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/CHANGELOG.html</changelogurl>
     <updateservers>
         <server type="extension" name="Cybersalt Userback Admin Updates">https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/updates.xml</server>
     </updateservers>
