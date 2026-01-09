@@ -7,7 +7,7 @@
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
     <authorUrl>https://cybersalt.com</authorUrl>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <description><![CDATA[
         <h3>Cybersalt Userback Admin</h3>
         <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>

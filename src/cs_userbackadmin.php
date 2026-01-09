@@ -100,6 +100,17 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
 
         // Check user group restrictions
         $allowedGroups = $this->params->get('backend_usergroups', []);
+
+        // Handle both array and string formats from Joomla params
+        if (is_string($allowedGroups)) {
+            $allowedGroups = $allowedGroups !== '' ? explode(',', $allowedGroups) : [];
+        }
+        if (!is_array($allowedGroups)) {
+            $allowedGroups = [];
+        }
+        // Filter out empty values
+        $allowedGroups = array_filter($allowedGroups, function($v) { return $v !== '' && $v !== null; });
+
         if (!empty($allowedGroups)) {
             return $this->userInGroups($user, $allowedGroups);
         }
@@ -114,11 +125,23 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
     private function shouldShowOnFrontend(?User $user): bool
     {
         // Check if frontend is enabled
-        if (!(int) $this->params->get('enable_frontend', 0)) {
+        $enableFrontend = $this->params->get('enable_frontend', 0);
+        if (!(int) $enableFrontend) {
             return false;
         }
 
         $allowedGroups = $this->params->get('frontend_usergroups', []);
+
+        // Handle both array and string formats from Joomla params
+        if (is_string($allowedGroups)) {
+            $allowedGroups = $allowedGroups !== '' ? explode(',', $allowedGroups) : [];
+        }
+        if (!is_array($allowedGroups)) {
+            $allowedGroups = [];
+        }
+        // Filter out empty values
+        $allowedGroups = array_filter($allowedGroups, function($v) { return $v !== '' && $v !== null; });
+
         $hasGroupRestrictions = !empty($allowedGroups);
 
         // Check for active backend session (user logged into admin)
@@ -161,42 +184,99 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
      * Get user from backend session if one exists for the current browser
      * Joomla stores frontend and backend sessions separately in #__session table
      * client_id = 0 for frontend, client_id = 1 for administrator
+     *
+     * Strategy: Look for admin session cookie, read its session data, extract user ID
      */
     private function getBackendSessionUser(): ?User
     {
         try {
-            $db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
-
-            // Collect all cookie values that could be session IDs
-            $potentialSessionIds = [];
-            foreach ($_COOKIE as $cookieName => $cookieValue) {
-                // Session IDs are typically 32+ character hex strings
-                if (is_string($cookieValue) && preg_match('/^[a-f0-9]{26,}$/i', $cookieValue)) {
-                    $potentialSessionIds[] = $cookieValue;
-                }
-            }
-
-            if (empty($potentialSessionIds)) {
-                return null;
-            }
-
-            // Query for any of these session IDs that match an admin session
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('userid'))
-                ->from($db->quoteName('#__session'))
-                ->whereIn($db->quoteName('session_id'), $potentialSessionIds, \Joomla\Database\ParameterType::STRING)
-                ->where($db->quoteName('client_id') . ' = 1')  // 1 = administrator session
-                ->where($db->quoteName('userid') . ' > 0')
-                ->where($db->quoteName('guest') . ' = 0');
-
-            $db->setQuery($query);
-            $adminUserId = $db->loadResult();
+            // Method 1: Try to find an admin session cookie and look it up
+            $adminUserId = $this->findAdminSessionUserId();
 
             if ($adminUserId && (int) $adminUserId > 0) {
                 return Factory::getContainer()->get(\Joomla\CMS\User\UserFactoryInterface::class)->loadUserById((int) $adminUserId);
             }
         } catch (\Throwable $e) {
             // Fail silently
+        }
+
+        return null;
+    }
+
+    /**
+     * Find user ID from any active administrator session for this browser
+     */
+    private function findAdminSessionUserId(): ?int
+    {
+        $db = Factory::getContainer()->get(\Joomla\Database\DatabaseInterface::class);
+
+        // Collect potential session IDs from cookies
+        // Include original values, MD5 hashes, and SHA-256 hashes
+        $potentialSessionIds = [];
+        foreach ($_COOKIE as $cookieName => $cookieValue) {
+            if (!is_string($cookieValue)) {
+                continue;
+            }
+
+            // Session IDs are typically 26-48 character alphanumeric/hex strings
+            if (preg_match('/^[a-f0-9]{20,}$/i', $cookieValue) || preg_match('/^[a-zA-Z0-9,-]{20,}$/i', $cookieValue)) {
+                $potentialSessionIds[] = $cookieValue;
+                $potentialSessionIds[] = md5($cookieValue);
+                $potentialSessionIds[] = hash('sha256', $cookieValue);
+            }
+        }
+
+        // Also add the current PHP session ID if available
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $phpSessionId = session_id();
+            if ($phpSessionId) {
+                $potentialSessionIds[] = $phpSessionId;
+                $potentialSessionIds[] = md5($phpSessionId);
+                $potentialSessionIds[] = hash('sha256', $phpSessionId);
+            }
+        }
+
+        if (!empty($potentialSessionIds)) {
+            // Remove duplicates
+            $potentialSessionIds = array_unique($potentialSessionIds);
+
+            // Try direct session_id match first
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('userid'))
+                ->from($db->quoteName('#__session'))
+                ->whereIn($db->quoteName('session_id'), $potentialSessionIds, \Joomla\Database\ParameterType::STRING)
+                ->where($db->quoteName('client_id') . ' = 1')
+                ->where($db->quoteName('userid') . ' > 0')
+                ->where($db->quoteName('guest') . ' = 0');
+
+            $db->setQuery($query);
+            $userId = $db->loadResult();
+
+            if ($userId) {
+                return (int) $userId;
+            }
+        }
+
+        // Method 2: Check if current frontend user has an active admin session
+        // This works when the same user is logged into both frontend and backend
+        $app = Factory::getApplication();
+        $currentUser = $app->getIdentity();
+
+        if ($currentUser && !$currentUser->guest && (int) $currentUser->id > 0) {
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__session'))
+                ->where($db->quoteName('userid') . ' = :userId')
+                ->where($db->quoteName('client_id') . ' = 1')
+                ->where($db->quoteName('guest') . ' = 0')
+                ->bind(':userId', $currentUser->id, \Joomla\Database\ParameterType::INTEGER);
+
+            $db->setQuery($query);
+            $hasAdminSession = (int) $db->loadResult() > 0;
+
+            if ($hasAdminSession) {
+                return (int) $currentUser->id;
+            }
         }
 
         return null;
