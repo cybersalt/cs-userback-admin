@@ -21,8 +21,7 @@ A Joomla 5 System Plugin that injects the [Userback](https://userback.io) feedba
 1. Download the latest release ZIP from the [Releases](https://github.com/cybersalt/cs-userback-admin/releases) page or download this repository as a ZIP
 2. In Joomla Administrator, go to **System > Extensions > Install**
 3. Upload and install the ZIP file
-4. Go to **System > Manage > Plugins** and search for "Cybersalt Userback Admin"
-5. Open the plugin, enter your **Userback Access Token**, and enable it
+4. The plugin is automatically enabled with a default access token and Super Users group selected for both backend and frontend
 
 ---
 
@@ -64,6 +63,17 @@ This means administrators can browse the frontend and still see the feedback wid
 ---
 
 ## Changelog
+
+### Version 1.2.0 (March 2026)
+- Added default Userback access token for easier initial setup
+- Backend and frontend user group restrictions now default to Super Users
+- Frontend widget display is now enabled by default
+- Plugin is automatically enabled after installation
+
+### Version 1.1.1 (January 2026)
+- Fixed backend session detection for database and filesystem session handlers
+- Fixed user group parameter handling for array and comma-separated formats
+- Added MD5 and SHA-256 hash fallbacks for session ID matching
 
 ### Version 1.1.0 (January 2026)
 - Added frontend widget support
