@@ -7,7 +7,7 @@
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
     <authorUrl>https://cybersalt.com</authorUrl>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <description><![CDATA[
         <h3>Cybersalt Userback Admin</h3>
         <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>
@@ -23,6 +23,7 @@
         <p><strong>Credits:</strong> Developed by Cybersalt Consulting Ltd. with contributions from Gurnoor Deol.</p>
         <p><a href="https://github.com/cybersalt/cs-userback-admin" target="_blank">View on GitHub</a></p>
     ]]></description>
+    <scriptfile>script.php</scriptfile>
     <files>
         <filename plugin="cs_userbackadmin">cs_userbackadmin.php</filename>
     </files>
@@ -38,6 +39,7 @@
                     type="text"
                     label="Userback Access Token"
                     description="Enter your Userback project access token here."
+                    default="P-a2HiX6xFzcD2LOHaPHMLlCcDV"
                 />
             </fieldset>
 
@@ -59,6 +61,7 @@
                     label="Backend User Groups"
                     description="Select which user groups can see the widget in the backend. Leave empty to show to all backend users."
                     multiple="true"
+                    default="8"
                 />
             </fieldset>
 
@@ -68,7 +71,7 @@
                     type="radio"
                     label="Enable on Frontend"
                     description="Show the Userback widget on the public site."
-                    default="0"
+                    default="1"
                     class="btn-group btn-group-yesno"
                 >
                     <option value="1">Yes</option>
@@ -80,6 +83,7 @@
                     label="Frontend User Groups"
                     description="Select which user groups can see the widget on the frontend. Leave empty to show to all logged-in users."
                     multiple="true"
+                    default="8"
                 />
                 <field
                     name="show_guests"

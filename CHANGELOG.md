@@ -4,6 +4,16 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.2.0 (March 2026)
+
+### 🔧 Improvements
+- **Default Access Token**: Added default Userback access token for easier initial setup
+- **Default Super Users Group**: Backend and frontend user group restrictions now default to Super Users
+- **Frontend Enabled by Default**: Frontend widget display is now enabled by default
+- **Auto-Enable on Install**: Plugin is automatically enabled after installation
+
+---
+
 ## 🚀 Version 1.1.1 (January 2026)
 
 ### 🐛 Bug Fixes
