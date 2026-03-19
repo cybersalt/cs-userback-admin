@@ -7,7 +7,7 @@
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
     <authorUrl>https://cybersalt.com</authorUrl>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <description><![CDATA[
         <h3>Cybersalt Userback Admin</h3>
         <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>
@@ -35,11 +35,33 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
+                    name="embed_mode"
+                    type="radio"
+                    label="Embed Mode"
+                    description="Choose whether to enter just the access token or paste the full Userback embed script."
+                    default="token"
+                    class="btn-group"
+                >
+                    <option value="token">Access Token</option>
+                    <option value="script">Full Script</option>
+                </field>
+                <field
                     name="access_token"
                     type="text"
                     label="Userback Access Token"
-                    description="Enter your Userback project access token here."
-                    default="P-a2HiX6xFzcD2LOHaPHMLlCcDV"
+                    description="Enter your Userback project access token (e.g. P-a2HiX6xFzcD2LOHaPHMLlCcDV)."
+                    default=""
+                    showon="embed_mode:token"
+                />
+                <field
+                    name="custom_script"
+                    type="textarea"
+                    label="Userback Embed Script"
+                    description="Paste the full Userback embed script from your dashboard here."
+                    default=""
+                    rows="10"
+                    filter="raw"
+                    showon="embed_mode:script"
                 />
             </fieldset>
 

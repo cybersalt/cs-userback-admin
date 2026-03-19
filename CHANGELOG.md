@@ -4,6 +4,18 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.2.2 (March 2026)
+
+### 📦 New Features
+- **Embed Mode Selection**: Choose between entering just the access token or pasting the full Userback embed script
+- **Custom Script Support**: Textarea for pasting the complete Userback embed script from the dashboard
+- **Smart Script Handling**: Automatically strips `<script>` tags from pasted scripts
+
+### 🔧 Improvements
+- **Removed Default Token**: Access token field now defaults to blank for security
+
+---
+
 ## 🚀 Version 1.2.1 (March 2026)
 
 ### 🔧 Improvements

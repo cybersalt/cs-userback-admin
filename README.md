@@ -64,6 +64,10 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
+### Version 1.2.2 (March 2026)
+- Added embed mode selection: access token or full script paste
+- Removed default access token for security
+
 ### Version 1.2.1 (March 2026)
 - Added clickable button to open plugin settings after install or update
 

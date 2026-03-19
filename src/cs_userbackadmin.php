@@ -42,11 +42,8 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 return;
             }
 
-            // Get Userback token
-            $token = (string) $this->params->get('access_token', '');
-            if ($token === '') {
-                return;
-            }
+            // Get embed mode
+            $embedMode = (string) $this->params->get('embed_mode', 'token');
 
             // Get current user
             $user = $app->getIdentity();
@@ -65,18 +62,31 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 }
             }
 
-            // Add Userback script
-            $script = <<<JS
-                window.Userback = window.Userback || {};
-                Userback.access_token = '{$token}';
-                (function(d) {
-                    var s = d.createElement('script'); s.async = true;
-                    s.src = 'https://static.userback.io/widget/v1.js';
-                    (d.head || d.body).appendChild(s);
-                })(document);
-            JS;
-
-            $doc->addScriptDeclaration($script);
+            // Add Userback script based on embed mode
+            if ($embedMode === 'script') {
+                $customScript = (string) $this->params->get('custom_script', '');
+                if ($customScript === '') {
+                    return;
+                }
+                // Strip <script> tags if present, keep only the JS content
+                $customScript = preg_replace('#</?script[^>]*>#i', '', $customScript);
+                $doc->addScriptDeclaration(trim($customScript));
+            } else {
+                $token = (string) $this->params->get('access_token', '');
+                if ($token === '') {
+                    return;
+                }
+                $script = <<<JS
+                    window.Userback = window.Userback || {};
+                    Userback.access_token = '{$token}';
+                    (function(d) {
+                        var s = d.createElement('script'); s.async = true;
+                        s.src = 'https://static.userback.io/widget/v1.js';
+                        (d.head || d.body).appendChild(s);
+                    })(document);
+                JS;
+                $doc->addScriptDeclaration($script);
+            }
 
         } catch (\Throwable $e) {
             // Fail silently to prevent crash
@@ -304,14 +314,25 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
         // Check if enabling
         $enabled = (int) ($data['enabled'] ?? $table->enabled ?? 0);
 
-        // Get the access token being saved
-        $params = $data['params'] ?? [];
-        $token = $params['access_token'] ?? '';
+        if ($enabled === 1) {
+            $params = $data['params'] ?? [];
+            $embedMode = $params['embed_mode'] ?? 'token';
 
-        if ($enabled === 1 && trim($token) === '') {
-            $app = Factory::getApplication();
-            $app->enqueueMessage('Please enter a valid Userback access token before enabling the plugin.', 'error');
-            return false; // block save
+            if ($embedMode === 'script') {
+                $customScript = trim($params['custom_script'] ?? '');
+                if ($customScript === '') {
+                    $app = Factory::getApplication();
+                    $app->enqueueMessage('Please paste your Userback embed script before enabling the plugin.', 'error');
+                    return false;
+                }
+            } else {
+                $token = trim($params['access_token'] ?? '');
+                if ($token === '') {
+                    $app = Factory::getApplication();
+                    $app->enqueueMessage('Please enter a valid Userback access token before enabling the plugin.', 'error');
+                    return false;
+                }
+            }
         }
 
         return true;
