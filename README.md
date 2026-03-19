@@ -64,6 +64,9 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
+### Version 1.2.1 (March 2026)
+- Added clickable button to open plugin settings after install or update
+
 ### Version 1.2.0 (March 2026)
 - Added default Userback access token for easier initial setup
 - Backend and frontend user group restrictions now default to Super Users

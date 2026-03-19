@@ -4,6 +4,13 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.2.1 (March 2026)
+
+### 🔧 Improvements
+- **Post-Install Settings Link**: Added clickable button to open plugin settings after install or update
+
+---
+
 ## 🚀 Version 1.2.0 (March 2026)
 
 ### 🔧 Improvements
