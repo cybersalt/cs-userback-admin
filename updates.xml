@@ -12,6 +12,7 @@
         <downloads>
             <downloadurl type="full" format="zip">https://github.com/cybersalt/cs-userback-admin/releases/download/v1.2.2/plg_system_cs_userbackadmin_v1.2.2.zip</downloadurl>
         </downloads>
+        <sha256>aa61c81e3b0b9c81d047b46c074a7a5cb17ee1aadbe1d6e33ade20f2c68d163d</sha256>
         <tags>
             <tag>stable</tag>
         </tags>
