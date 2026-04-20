@@ -64,6 +64,9 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
+### Version 1.5.0 (2026-04-20)
+- Custom Data Extras JSON field for appending arbitrary key/value pairs to every feedback submission
+
 ### Version 1.4.0 (2026-04-20)
 - User identification (name, email, user groups, Joomla version) attached to every submission
 - Page context metadata (URL, component, view, layout, item ID, template, hostname, environment)

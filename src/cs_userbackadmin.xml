@@ -7,7 +7,7 @@
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
     <authorUrl>https://cybersalt.com</authorUrl>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <description><![CDATA[
         <h3>Cybersalt Userback Admin</h3>
         <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>
@@ -74,6 +74,15 @@
                     <option value="yes">Yes — always use native</option>
                     <option value="no">No — always use server render</option>
                 </field>
+                <field
+                    name="custom_data_extras"
+                    type="textarea"
+                    label="Custom Data Extras (JSON)"
+                    description="Optional JSON object of extra key/value pairs attached to every feedback submission (appears in the Userback dashboard sidebar). Example: &lt;code&gt;{&quot;client_id&quot;:&quot;abc123&quot;,&quot;site_tier&quot;:&quot;premium&quot;}&lt;/code&gt;. Values should be strings, numbers, or booleans. Invalid JSON is silently ignored. Keys here override the plugin's built-in context keys if they collide."
+                    default=""
+                    rows="4"
+                    filter="raw"
+                />
             </fieldset>
 
             <fieldset name="backend" label="Backend Settings">

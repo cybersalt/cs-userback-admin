@@ -4,6 +4,13 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.5.0 (2026-04-20)
+
+### 📦 New Features
+- **Custom Data Extras (JSON)**: New textarea in Basic Settings for appending arbitrary key/value pairs to every feedback submission (e.g., `client_id`, `site_tier`, `crm_id`). Invalid JSON is silently ignored; admin-supplied keys override the plugin's built-in context keys on collision.
+
+---
+
 ## 🚀 Version 1.4.0 (2026-04-20)
 
 ### 📦 New Features

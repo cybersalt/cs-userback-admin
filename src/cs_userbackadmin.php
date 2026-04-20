@@ -142,6 +142,21 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
             'environment' => (defined('JDEBUG') && JDEBUG) ? 'dev' : 'production',
         ];
 
+        // Merge admin-supplied custom_data extras (JSON textarea). User-supplied
+        // keys override plugin-built-in keys on collision.
+        $extrasRaw = trim((string) $this->params->get('custom_data_extras', ''));
+        if ($extrasRaw !== '') {
+            $extras = json_decode($extrasRaw, true);
+            if (is_array($extras)) {
+                foreach ($extras as $k => $v) {
+                    if (!is_string($k) || $k === '') {
+                        continue;
+                    }
+                    $customData[$k] = is_scalar($v) || $v === null ? $v : json_encode($v);
+                }
+            }
+        }
+
         $category = $isAdmin
             ? (string) $this->params->get('category_backend',  'Admin Backend')
             : (string) $this->params->get('category_frontend', 'Public Site');

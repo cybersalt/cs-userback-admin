@@ -7,12 +7,12 @@
         <type>plugin</type>
         <folder>system</folder>
         <client>0</client>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
         <infourl title="Cybersalt Userback Admin">https://github.com/cybersalt/cs-userback-admin</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://github.com/cybersalt/cs-userback-admin/releases/download/v1.4.0/plg_system_cs_userbackadmin_v1.4.0.zip</downloadurl>
+            <downloadurl type="full" format="zip">https://github.com/cybersalt/cs-userback-admin/releases/download/v1.5.0/plg_system_cs_userbackadmin_v1.5.0.zip</downloadurl>
         </downloads>
-        <sha256>e0d4b4dbe535166dcccba97080b0b6ae710e6cf06134aa4656b5bdb565959482</sha256>
+        <sha256>5745d1465f29b63a90df3e7bf70129e18503bc185696dd04d7f1c647286f48aa</sha256>
         <tags>
             <tag>stable</tag>
         </tags>
