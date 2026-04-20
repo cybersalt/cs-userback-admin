@@ -64,7 +64,7 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
-### Version 1.3.0 (April 2026)
+### Version 1.3.0 (2026-04-20)
 - Security fix: patched stored XSS via unsanitized access token (token now validated and JSON-encoded)
 
 ### Version 1.2.2 (March 2026)
