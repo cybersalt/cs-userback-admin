@@ -64,6 +64,9 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
+### Version 1.2.3 (March 2026)
+- Security fix: patched stored XSS via unsanitized access token (token now validated and JSON-encoded)
+
 ### Version 1.2.2 (March 2026)
 - Added embed mode selection: access token or full script paste
 - Removed default access token for security

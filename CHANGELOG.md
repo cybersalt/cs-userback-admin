@@ -4,6 +4,13 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.2.3 (March 2026)
+
+### 🔒 Security
+- **XSS Fix (HIGH)**: Fixed stored XSS vulnerability in token injection. The access token is now strictly validated against an allowlist pattern and JSON-encoded before injection into the script block, preventing a user with plugin-edit ACL from breaking out of the JS string to execute arbitrary code in other admins' sessions.
+
+---
+
 ## 🚀 Version 1.2.2 (March 2026)
 
 ### 📦 New Features

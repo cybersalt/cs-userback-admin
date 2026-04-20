@@ -73,12 +73,13 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 $doc->addScriptDeclaration(trim($customScript));
             } else {
                 $token = (string) $this->params->get('access_token', '');
-                if ($token === '') {
+                if ($token === '' || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $token)) {
                     return;
                 }
+                $tokenJs = json_encode($token, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
                 $script = <<<JS
                     window.Userback = window.Userback || {};
-                    Userback.access_token = '{$token}';
+                    Userback.access_token = {$tokenJs};
                     (function(d) {
                         var s = d.createElement('script'); s.async = true;
                         s.src = 'https://static.userback.io/widget/v1.js';

@@ -3,6 +3,15 @@
     <p>All notable changes to this plugin will be documented here.</p>
 
     <div class="version">
+        <h2>🚀 Version 1.2.3 <span class="version-badge">March 2026</span></h2>
+
+        <h3>🔒 Security</h3>
+        <ul>
+            <li><strong>XSS Fix (HIGH)</strong>: Fixed stored XSS vulnerability in token injection. The access token is now strictly validated against an allowlist pattern and JSON-encoded before injection into the script block, preventing a user with plugin-edit ACL from breaking out of the JS string to execute arbitrary code in other admins' sessions.</li>
+        </ul>
+    </div>
+
+    <div class="version">
         <h2>🚀 Version 1.2.2 <span class="version-badge">March 2026</span></h2>
 
         <h3>📦 New Features</h3>
