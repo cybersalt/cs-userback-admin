@@ -18,6 +18,7 @@
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\User;
 
 final class PlgSystemCs_userbackadmin extends CMSPlugin
@@ -62,6 +63,9 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 }
             }
 
+            // Build the Userback context prelude (user identification, custom data, category, native screenshot)
+            $prelude = $this->buildUserbackPrelude($app, $isAdmin, $user);
+
             // Add Userback script based on embed mode
             if ($embedMode === 'script') {
                 $customScript = (string) $this->params->get('custom_script', '');
@@ -70,28 +74,123 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 }
                 // Strip <script> tags if present, keep only the JS content
                 $customScript = preg_replace('#</?script[^>]*>#i', '', $customScript);
-                $doc->addScriptDeclaration(trim($customScript));
+                $doc->addScriptDeclaration($prelude . trim($customScript));
             } else {
                 $token = (string) $this->params->get('access_token', '');
                 if ($token === '' || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $token)) {
                     return;
                 }
                 $tokenJs = json_encode($token, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-                $script = <<<JS
-                    window.Userback = window.Userback || {};
-                    Userback.access_token = {$tokenJs};
-                    (function(d) {
-                        var s = d.createElement('script'); s.async = true;
-                        s.src = 'https://static.userback.io/widget/v1.js';
-                        (d.head || d.body).appendChild(s);
-                    })(document);
+                $loader = <<<JS
+                Userback.access_token = {$tokenJs};
+                (function(d) {
+                    var s = d.createElement('script'); s.async = true;
+                    s.src = 'https://static.userback.io/widget/v1.js';
+                    (d.head || d.body).appendChild(s);
+                })(document);
                 JS;
-                $doc->addScriptDeclaration($script);
+                $doc->addScriptDeclaration($prelude . $loader);
             }
 
         } catch (\Throwable $e) {
             // Fail silently to prevent crash
         }
+    }
+
+    /**
+     * Build the JS prelude that configures Userback with user identification,
+     * page context, category, and native-screenshot preference. Emitted before
+     * the loader in both embed modes so the widget initializes with full context
+     * regardless of whether the token or full-script snippet is used.
+     */
+    private function buildUserbackPrelude($app, bool $isAdmin, ?User $user): string
+    {
+        // If on the frontend but an administrator session exists for this browser,
+        // attribute feedback to the admin user (they're the effective viewer).
+        $effectiveUser = $user;
+        if (!$isAdmin) {
+            $backendUser = $this->getBackendSessionUser();
+            if ($backendUser !== null && !$backendUser->guest) {
+                $effectiveUser = $backendUser;
+            }
+        }
+
+        $isIdentified = ($effectiveUser !== null && !$effectiveUser->guest);
+
+        $userData = [
+            'id'   => (string) ($isIdentified ? $effectiveUser->id : 0),
+            'info' => [
+                'name'           => $isIdentified ? (string) $effectiveUser->name  : 'Guest',
+                'email'          => $isIdentified ? (string) $effectiveUser->email : '',
+                'user_groups'    => $isIdentified ? implode(',', $effectiveUser->getAuthorisedGroups()) : '',
+                'joomla_version' => JVERSION,
+            ],
+        ];
+
+        $input = $app->input;
+        $uri   = Uri::getInstance();
+
+        $customData = [
+            'context'     => $isAdmin ? 'admin' : 'site',
+            'page_url'    => $uri->toString(),
+            'option'      => (string) $input->get('option', '', 'cmd'),
+            'view'        => (string) $input->get('view', '', 'cmd'),
+            'layout'      => (string) $input->get('layout', '', 'cmd'),
+            'item_id'     => (int)    $input->get('id', 0),
+            'template'    => (string) $app->getTemplate(),
+            'host'        => (string) $uri->getHost(),
+            'environment' => (defined('JDEBUG') && JDEBUG) ? 'dev' : 'production',
+        ];
+
+        $category = $isAdmin
+            ? (string) $this->params->get('category_backend',  'Admin Backend')
+            : (string) $this->params->get('category_frontend', 'Public Site');
+
+        $nativeSetting = (string) $this->params->get('native_screenshot', 'auto');
+        $useNative     = null;
+        if ($nativeSetting === 'yes') {
+            $useNative = true;
+        } elseif ($nativeSetting === 'no') {
+            $useNative = false;
+        } elseif ($this->hostLooksLikeDevOrStaging($uri->getHost())) {
+            $useNative = true;
+        }
+
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES;
+        $userDataJs   = json_encode($userData,   $flags);
+        $customDataJs = json_encode($customData, $flags);
+        $categoryJs   = json_encode($category,   $flags);
+
+        $prelude  = "window.Userback = window.Userback || {};\n";
+        $prelude .= "Userback.user_data = {$userDataJs};\n";
+        $prelude .= "Userback.custom_data = {$customDataJs};\n";
+        $prelude .= "Userback.categories = {$categoryJs};\n";
+        if ($useNative === true) {
+            $prelude .= "Userback.native_screenshot = true;\n";
+        } elseif ($useNative === false) {
+            $prelude .= "Userback.native_screenshot = false;\n";
+        }
+
+        return $prelude;
+    }
+
+    /**
+     * Heuristic for dev/staging hostnames where Userback's server-side screenshot
+     * engine can't reach the page and native screenshot should be auto-enabled.
+     */
+    private function hostLooksLikeDevOrStaging(string $host): bool
+    {
+        if ($host === '' || $host === 'localhost' || $host === '127.0.0.1') {
+            return true;
+        }
+        $lower = strtolower($host);
+        if (str_ends_with($lower, '.local') || str_ends_with($lower, '.test') || str_ends_with($lower, '.localhost')) {
+            return true;
+        }
+        if (str_contains($lower, 'staging.') || str_contains($lower, '.staging') || str_contains($lower, 'dev.') || str_contains($lower, '.dev')) {
+            return true;
+        }
+        return false;
     }
 
     /**

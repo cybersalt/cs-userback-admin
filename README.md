@@ -64,6 +64,12 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
+### Version 1.4.0 (2026-04-20)
+- User identification (name, email, user groups, Joomla version) attached to every submission
+- Page context metadata (URL, component, view, layout, item ID, template, hostname, environment)
+- Native screenshot toggle with auto-detection of localhost/staging/dev hostnames
+- Separate backend and frontend categories for dashboard routing
+
 ### Version 1.3.0 (2026-04-20)
 - Security fix: patched stored XSS via unsanitized access token (token now validated and JSON-encoded)
 

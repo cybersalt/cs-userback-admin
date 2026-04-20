@@ -4,6 +4,19 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## 🚀 Version 1.4.0 (2026-04-20)
+
+### 📦 New Features
+- **User Identification**: Feedback now arrives with the submitter's name, email, user groups, and Joomla version attached. When a frontend visitor has an active backend session, the admin user is credited instead of the guest/frontend identity.
+- **Page & Context Metadata**: Every submission includes the page URL, component (`option`), view, layout, item ID, active template, hostname, and environment (dev/production) — visible in the Userback dashboard sidebar.
+- **Native Screenshot Toggle**: New "Native Screenshot" setting (Auto / Yes / No). Auto enables the browser's native screenshot API on localhost, `.local`, `.test`, and hostnames containing `staging` or `dev` — fixing the "feedback arrived without a screenshot" issue on private/staging sites.
+- **Backend / Frontend Categories**: Separate category text fields pre-tag submissions as "Admin Backend" or "Public Site" by default so feedback is instantly routable in the Userback dashboard.
+
+### 🔧 Improvements
+- **Embed Mode Description**: Clarified in-admin that both embed modes still receive dynamic user identification, context, category, and screenshot settings from the plugin.
+
+---
+
 ## 🚀 Version 1.3.0 (2026-04-20)
 
 ### 🔒 Security
