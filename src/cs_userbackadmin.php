@@ -17,12 +17,20 @@
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\User;
 
 final class PlgSystemCs_userbackadmin extends CMSPlugin
 {
+    /**
+     * Load the plugin language file automatically (admin messages and settings text).
+     *
+     * @var    boolean
+     */
+    protected $autoloadLanguage = true;
+
     public function onBeforeCompileHead(): void
     {
         try {
@@ -64,7 +72,7 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
             }
 
             // Build the Userback context prelude (user identification, custom data, category, native screenshot)
-            $prelude = $this->buildUserbackPrelude($app, $isAdmin, $user);
+            [$prelude, $identity] = $this->buildUserbackPrelude($app, $isAdmin, $user);
 
             // Add Userback script based on embed mode
             if ($embedMode === 'script') {
@@ -74,7 +82,13 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 }
                 // Strip <script> tags if present, keep only the JS content
                 $customScript = preg_replace('#</?script[^>]*>#i', '', $customScript);
-                $doc->addScriptDeclaration($prelude . trim($customScript));
+
+                // The snippet copied from the Userback dashboard carries sample user_data
+                // (someone@example.com). Remove it so it cannot replace the real Joomla user,
+                // then re-assert the real identity after the snippet (see buildIdentityEnforcer()).
+                $customScript = $this->stripUserDataFromSnippet($customScript);
+
+                $doc->addScriptDeclaration($prelude . trim($customScript) . "\n;\n" . $this->buildIdentityEnforcer($identity));
             } else {
                 $token = (string) $this->params->get('access_token', '');
                 if ($token === '' || !preg_match('/^[A-Za-z0-9_-]{1,128}$/', $token)) {
@@ -102,8 +116,11 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
      * page context, category, and native-screenshot preference. Emitted before
      * the loader in both embed modes so the widget initializes with full context
      * regardless of whether the token or full-script snippet is used.
+     *
+     * @return  array  [0] the prelude JS string; [1] the JSON-encoded identity pieces
+     *                 (userData, id, info) used to re-assert the real user after a pasted snippet.
      */
-    private function buildUserbackPrelude($app, bool $isAdmin, ?User $user): string
+    private function buildUserbackPrelude($app, bool $isAdmin, ?User $user): array
     {
         // If on the frontend but an administrator session exists for this browser,
         // attribute feedback to the admin user (they're the effective viewer).
@@ -173,6 +190,11 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
 
         $flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES;
         $userDataJs   = json_encode($userData,   $flags);
+        $identity     = [
+            'userData' => $userDataJs,
+            'id'       => json_encode($userData['id'],   $flags),
+            'info'     => json_encode($userData['info'], $flags),
+        ];
         $customDataJs = json_encode($customData, $flags);
         $categoryJs   = json_encode($category,   $flags);
 
@@ -186,7 +208,125 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
             $prelude .= "Userback.native_screenshot = false;\n";
         }
 
-        return $prelude;
+        return [$prelude, $identity];
+    }
+
+    /**
+     * Remove user_data from a pasted Userback snippet.
+     *
+     * Handles both `Userback.user_data = { ... };` and a `user_data: { ... }` key inside
+     * `Userback.init(token, { ... })` options. Braces are matched with a small scanner that
+     * skips string literals, so nested objects are removed whole.
+     */
+    private function stripUserDataFromSnippet(string $js): string
+    {
+        $pattern = '/(?:\b(?:window\s*\.\s*)?Userback\s*\.\s*user_data\s*=\s*|(?<![\w$.])["\']?user_data["\']?\s*:\s*)(?=\{)/';
+        $out     = '';
+        $pos     = 0;
+
+        while (preg_match($pattern, $js, $m, PREG_OFFSET_CAPTURE, $pos)) {
+            $matchStart = $m[0][1];
+            $braceStart = $matchStart + strlen($m[0][0]);
+            $braceEnd   = $this->findMatchingBrace($js, $braceStart);
+
+            if ($braceEnd === null) {
+                // Unbalanced snippet: leave the rest untouched, the re-assert step still applies.
+                break;
+            }
+
+            $isAssignment = str_contains($m[0][0], 'Userback');
+            $out .= substr($js, $pos, $matchStart - $pos);
+            $end  = $braceEnd + 1;
+
+            if ($isAssignment) {
+                // Keep the statement syntactically valid whatever follows.
+                $out .= 'void 0';
+            } elseif (preg_match('/\G\s*,/', $js, $c, 0, $end)) {
+                // Object key: also drop the trailing comma so the literal stays valid.
+                $end += strlen($c[0]);
+            }
+
+            $pos = $end;
+        }
+
+        return $out . substr($js, $pos);
+    }
+
+    /**
+     * Find the closing brace that matches the opening brace at $start, ignoring braces
+     * inside string literals. Returns null if the braces are not balanced.
+     */
+    private function findMatchingBrace(string $js, int $start): ?int
+    {
+        $depth = 0;
+        $len   = strlen($js);
+        $quote = '';
+
+        for ($i = $start; $i < $len; $i++) {
+            $ch = $js[$i];
+
+            if ($quote !== '') {
+                if ($ch === '\\') {
+                    $i++;
+                } elseif ($ch === $quote) {
+                    $quote = '';
+                }
+                continue;
+            }
+
+            if ($ch === '"' || $ch === "'" || $ch === '`') {
+                $quote = $ch;
+            } elseif ($ch === '{') {
+                $depth++;
+            } elseif ($ch === '}') {
+                $depth--;
+                if ($depth === 0) {
+                    return $i;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * JS appended after a pasted snippet so the real Joomla user always wins.
+     *
+     * - Sets Userback.user_data again (covers the async-loader snippet, where the widget
+     *   reads user_data only after this inline script has finished).
+     * - If the widget API is already available (snippets that load v1.js synchronously and
+     *   call Userback.init()), also calls Userback.identify() with the real user.
+     */
+    private function buildIdentityEnforcer(array $identity): string
+    {
+        $js  = "window.Userback = window.Userback || {};\n";
+        $js .= "Userback.user_data = {$identity['userData']};\n";
+        $js .= "try { if (typeof Userback.identify === 'function') { Userback.identify({$identity['id']}, {$identity['info']}); } } catch (e) {}\n";
+
+        return $js;
+    }
+
+    /**
+     * Build the "please contact ..." sentence from the Support settings, for admin-facing messages.
+     */
+    private function getContactSentence(): string
+    {
+        $email = trim((string) $this->params->get('support_email', 'support@cybersalt.com'));
+        $url   = trim((string) $this->params->get('support_url', 'https://www.cybersalt.com/services/support-request-form'));
+        $label = trim((string) $this->params->get('support_label', 'Cybersalt support'));
+
+        if ($label === '') {
+            $label = 'Cybersalt support';
+        }
+
+        $details = array_filter([htmlspecialchars($email, ENT_QUOTES, 'UTF-8'), htmlspecialchars($url, ENT_QUOTES, 'UTF-8')]);
+        $label   = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+
+        if (empty($details)) {
+            return Text::sprintf('PLG_SYSTEM_CS_USERBACKADMIN_CONTACT_SUPPORT', $label);
+        }
+
+        return Text::sprintf('PLG_SYSTEM_CS_USERBACKADMIN_CONTACT_SUPPORT_WITH_DETAILS', $label, implode(' / ', $details));
     }
 
     /**
@@ -437,14 +577,14 @@ final class PlgSystemCs_userbackadmin extends CMSPlugin
                 $customScript = trim($params['custom_script'] ?? '');
                 if ($customScript === '') {
                     $app = Factory::getApplication();
-                    $app->enqueueMessage('Please paste your Userback embed script before enabling the plugin.', 'error');
+                    $app->enqueueMessage(Text::_('PLG_SYSTEM_CS_USERBACKADMIN_ERROR_SCRIPT_REQUIRED') . ' ' . $this->getContactSentence(), 'error');
                     return false;
                 }
             } else {
                 $token = trim($params['access_token'] ?? '');
                 if ($token === '') {
                     $app = Factory::getApplication();
-                    $app->enqueueMessage('Please enter a valid Userback access token before enabling the plugin.', 'error');
+                    $app->enqueueMessage(Text::_('PLG_SYSTEM_CS_USERBACKADMIN_ERROR_TOKEN_REQUIRED') . ' ' . $this->getContactSentence(), 'error');
                     return false;
                 }
             }

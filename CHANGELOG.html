@@ -3,6 +3,24 @@
     <p>All notable changes to this plugin will be documented here.</p>
 
     <div class="version">
+        <h2>Unreleased</h2>
+
+        <h3>🔧 Improvements</h3>
+        <ul>
+            <li><strong>API-billing and data disclosure</strong>: A note at the top of the settings now explains that Userback is a separate paid service billed to your own Userback account, where to get the access token, and exactly what is sent to Userback (user ID, name, email, user groups, Joomla version, page URL and context, Custom Data Extras, and the feedback itself).</li>
+            <li><strong>Support settings</strong>: New Support tab (support email, support URL, support label, with Cybersalt defaults). The plugin's admin messages now end with a "Please contact ..." line built from these settings.</li>
+            <li><strong>Fancy-select user groups</strong>: The Backend and Frontend User Groups fields now use Joomla's chip-style multi-select.</li>
+            <li><strong>English language file</strong>: New strings live in <code>language/en-GB/plg_system_cs_userbackadmin.ini</code>, and the two admin error messages are translatable.</li>
+        </ul>
+
+        <h3>🐛 Bug Fixes</h3>
+        <ul>
+            <li><strong>Joomla 6 updates</strong>: The update stream now targets Joomla 5 and 6 (<code>(5|6)\.[0-9]+</code>), so Joomla 6 sites are offered updates.</li>
+            <li><strong>Full Script mode showed "someone@example.com" (<a href="https://github.com/cybersalt/cs-userback-admin/issues/1">#1</a>)</strong>: The sample <code>user_data</code> in the pasted Userback snippet no longer replaces the real Joomla user. It is removed from the snippet and the real logged-in user's identity is applied again after it, so feedback is attributed to the right person. Access Token mode is unchanged.</li>
+        </ul>
+    </div>
+
+    <div class="version">
         <h2>🚀 Version 1.5.0 <span class="version-badge">2026-04-20</span></h2>
 
         <h3>📦 New Features</h3>

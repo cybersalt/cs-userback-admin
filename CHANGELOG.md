@@ -4,6 +4,20 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
+## [Unreleased]
+
+### 🔧 Improvements
+- **API-billing and data disclosure**: A note at the top of the settings now explains that Userback is a separate paid service billed to your own Userback account, where to get the access token, and exactly what is sent to Userback (user ID, name, email, user groups, Joomla version, page URL and context, Custom Data Extras, and the feedback itself).
+- **Support settings**: New Support tab (support email, support URL, support label, with Cybersalt defaults). The plugin's admin messages now end with a "Please contact ..." line built from these settings.
+- **Fancy-select user groups**: The Backend and Frontend User Groups fields now use Joomla's chip-style multi-select.
+- **English language file**: New strings live in `language/en-GB/plg_system_cs_userbackadmin.ini`, and the two admin error messages are translatable.
+
+### 🐛 Fixes
+- **Joomla 6 updates**: The update stream now targets Joomla 5 and 6 (`(5|6)\.[0-9]+`), so Joomla 6 sites are offered updates.
+- **Full Script mode showed "someone@example.com" ([#1](https://github.com/cybersalt/cs-userback-admin/issues/1))**: The sample `user_data` in the pasted Userback snippet no longer replaces the real Joomla user. It is removed from the snippet and the real logged-in user's identity is applied again after it, so feedback is attributed to the right person. Access Token mode is unchanged.
+
+---
+
 ## 🚀 Version 1.5.0 (2026-04-20)
 
 ### 📦 New Features

@@ -27,6 +27,9 @@
     <files>
         <filename plugin="cs_userbackadmin">cs_userbackadmin.php</filename>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_system_cs_userbackadmin.ini</language>
+    </languages>
     <changelogurl>https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/CHANGELOG.html</changelogurl>
     <updateservers>
         <server type="extension" name="Cybersalt Userback Admin Updates">https://raw.githubusercontent.com/cybersalt/cs-userback-admin/main/updates.xml</server>
@@ -35,12 +38,19 @@
         <fields name="params">
             <fieldset name="basic">
                 <field
+                    name="billing_note"
+                    type="note"
+                    label="PLG_SYSTEM_CS_USERBACKADMIN_BILLING_NOTE_LABEL"
+                    description="PLG_SYSTEM_CS_USERBACKADMIN_BILLING_NOTE_DESC"
+                    class="alert alert-info w-100"
+                />
+                <field
                     name="embed_mode"
                     type="radio"
                     label="Embed Mode"
                     description="How to configure the Userback widget. &lt;strong&gt;Access Token&lt;/strong&gt; (recommended): the plugin builds the loader from just your token. &lt;strong&gt;Full Script&lt;/strong&gt;: paste the entire embed snippet from your Userback dashboard — use this if Userback updates their loader before this plugin does. In both modes, the plugin still injects user identification, page context, category, and screenshot settings automatically."
                     default="token"
-                    class="btn-group"
+                    class="btn-group btn-group-yesno"
                 >
                     <option value="token">Access Token</option>
                     <option value="script">Full Script</option>
@@ -103,6 +113,7 @@
                     label="Backend User Groups"
                     description="Select which user groups can see the widget in the backend. Leave empty to show to all backend users."
                     multiple="true"
+                    layout="joomla.form.field.list-fancy-select"
                     default="8"
                 />
                 <field
@@ -132,6 +143,7 @@
                     label="Frontend User Groups"
                     description="Select which user groups can see the widget on the frontend. Leave empty to show to all logged-in users."
                     multiple="true"
+                    layout="joomla.form.field.list-fancy-select"
                     default="8"
                 />
                 <field
@@ -151,6 +163,40 @@
                     label="Frontend Category"
                     description="Pre-selected Userback category for feedback submitted from the public site. Helps with dashboard routing."
                     default="Public Site"
+                />
+            </fieldset>
+
+            <fieldset name="support" label="PLG_SYSTEM_CS_USERBACKADMIN_FIELDSET_SUPPORT">
+                <field
+                    name="support_note"
+                    type="note"
+                    label="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_NOTE_LABEL"
+                    description="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_NOTE_DESC"
+                    class="alert alert-info w-100"
+                />
+                <field
+                    name="support_email"
+                    type="email"
+                    label="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_EMAIL_LABEL"
+                    description="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_EMAIL_DESC"
+                    default="support@cybersalt.com"
+                    validate="email"
+                />
+                <field
+                    name="support_url"
+                    type="url"
+                    label="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_URL_LABEL"
+                    description="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_URL_DESC"
+                    default="https://www.cybersalt.com/services/support-request-form"
+                    filter="url"
+                    validate="url"
+                />
+                <field
+                    name="support_label"
+                    type="text"
+                    label="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_LABEL_LABEL"
+                    description="PLG_SYSTEM_CS_USERBACKADMIN_SUPPORT_LABEL_DESC"
+                    default="Cybersalt support"
                 />
             </fieldset>
         </fields>

@@ -1,6 +1,6 @@
 # Cybersalt Userback Admin
 
-A Joomla 5 System Plugin that injects the [Userback](https://userback.io) feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.
+A Joomla 5 and 6 System Plugin that injects the [Userback](https://userback.io) feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.
 
 ---
 
@@ -16,6 +16,19 @@ A Joomla 5 System Plugin that injects the [Userback](https://userback.io) feedba
 
 ---
 
+## Userback account, billing and data sent
+
+Userback is a separate, paid third-party service. This plugin only connects your Joomla site to it.
+
+- **Billing**: You need your own Userback account at [userback.io](https://userback.io). Plan fees, usage limits and invoices are between you and Userback. Cybersalt does not bill for Userback, and the plugin adds no charge of its own.
+- **Access token**: Open your project in your Userback dashboard and copy the access token from the widget installation snippet. Paste it into the plugin settings, or paste the whole snippet in Full Script mode.
+- **Data sent to Userback**: Whenever the widget loads, the visitor's browser sends Userback the Joomla user ID, name, email address and user group IDs, the Joomla version, the full URL of the page (including any query string), the component, view, layout and item ID, the template name, the host name, and anything you add under Custom Data Extras. Whatever the visitor types, captures or records in the feedback form is sent as well. Guests are sent as "Guest" with no email address.
+- **Who is affected**: Only people who are shown the widget under the Backend and Frontend settings. If you show the widget to public visitors, mention Userback in your own privacy policy.
+
+The same note appears at the top of the plugin settings.
+
+---
+
 ## Installation
 
 1. Download the latest release ZIP from the [Releases](https://github.com/cybersalt/cs-userback-admin/releases) page or download this repository as a ZIP
@@ -28,7 +41,10 @@ A Joomla 5 System Plugin that injects the [Userback](https://userback.io) feedba
 ## Configuration
 
 ### Basic Settings
-- **Access Token**: Your Userback project access token (required). Get this from your [Userback dashboard](https://userback.io).
+- **Embed Mode**: *Access Token* (recommended) builds the loader from just your token. *Full Script* uses the snippet you paste from your Userback dashboard.
+- **Access Token**: Your Userback project access token (required in Access Token mode). Get this from your [Userback dashboard](https://userback.io).
+- **Userback Embed Script**: The full snippet (Full Script mode). The sample `user_data` that Userback puts in the snippet (for example `someone@example.com`) is ignored: the plugin always identifies the real logged-in Joomla user.
+- **Native Screenshot**, **Custom Data Extras (JSON)**: See the field descriptions in the plugin settings.
 
 ### Backend Settings
 - **Enable in Backend**: Show/hide the widget in the administrator area (default: Yes)
@@ -38,6 +54,9 @@ A Joomla 5 System Plugin that injects the [Userback](https://userback.io) feedba
 - **Enable on Frontend**: Show/hide the widget on the public site (default: No)
 - **Frontend User Groups**: Restrict which user groups see the widget on the frontend. Leave empty to show to all logged-in users.
 - **Show to Guests**: Allow non-logged-in visitors to see the widget (default: No)
+
+### Support Settings
+- **Support Email**, **Support URL**, **Support Label**: Where to get help (defaults point to Cybersalt support). They are used in the plugin's admin messages, for example when you try to enable the plugin without an access token.
 
 ### How Frontend Detection Works
 
@@ -63,6 +82,13 @@ This means administrators can browse the frontend and still see the feedback wid
 ---
 
 ## Changelog
+
+### Unreleased
+- Disclosure of Userback billing, token location and data sent (settings note and this README)
+- Support settings (email, URL, label) used in the plugin's admin messages
+- Backend and Frontend User Groups use the chip-style multi-select
+- Update stream now covers Joomla 5 and 6
+- Fixed: in Full Script mode the sample `user_data` in the pasted snippet replaced the real Joomla user (issue #1)
 
 ### Version 1.5.0 (2026-04-20)
 - Custom Data Extras JSON field for appending arbitrary key/value pairs to every feedback submission
@@ -111,8 +137,9 @@ This means administrators can browse the frontend and still see the feedback wid
 ## Development
 
 This plugin consists of:
-- `userbackadmin.php` - Main PHP plugin logic
-- `userbackadmin.xml` - Manifest file for installation and configuration
+- `src/cs_userbackadmin.php` - Main PHP plugin logic
+- `src/cs_userbackadmin.xml` - Manifest file for installation and configuration
+- `src/language/en-GB/` - English language strings
 
 Clone, fork, or contribute on [GitHub](https://github.com/cybersalt/cs-userback-admin)!
 
