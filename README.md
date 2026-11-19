@@ -83,7 +83,7 @@ This means administrators can browse the frontend and still see the feedback wid
 
 ## Changelog
 
-### Unreleased
+### Version 1.5.1 (2026-11-19)
 - Disclosure of Userback billing, token location and data sent (settings note and this README)
 - Support settings (email, URL, label) used in the plugin's admin messages
 - Backend and Frontend User Groups use the chip-style multi-select

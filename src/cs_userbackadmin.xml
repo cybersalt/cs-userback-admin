@@ -2,12 +2,12 @@
 <extension type="plugin" group="system" method="upgrade" version="5.0">
     <name>Cybersalt Userback Admin</name>
     <author>Cybersalt Consulting Ltd.</author>
-    <creationDate>September 2025</creationDate>
+    <creationDate>2026-11-19</creationDate>
     <copyright>Copyright (C) 2025-2026 Cybersalt Consulting Ltd. All rights reserved.</copyright>
     <license>GNU General Public License version 3 or later</license>
     <authorEmail>support@cybersalt.com</authorEmail>
     <authorUrl>https://cybersalt.com</authorUrl>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
     <description><![CDATA[
         <h3>Cybersalt Userback Admin</h3>
         <p>Injects the <a href="https://userback.io" target="_blank">Userback</a> feedback widget into your Joomla site for easy bug reporting, screenshots, and feedback collection.</p>

@@ -4,7 +4,7 @@ All notable changes to Cybersalt Userback Admin will be documented in this file.
 
 ---
 
-## [Unreleased]
+## 🚀 Version 1.5.1 (2026-11-19)
 
 ### 🔧 Improvements
 - **API-billing and data disclosure**: A note at the top of the settings now explains that Userback is a separate paid service billed to your own Userback account, where to get the access token, and exactly what is sent to Userback (user ID, name, email, user groups, Joomla version, page URL and context, Custom Data Extras, and the feedback itself).
